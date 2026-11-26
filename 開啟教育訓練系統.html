@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企業教育訓練管理系統 | 快速入口與導航</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --indigo: #4f46e5;
+      --purple: #7c3aed;
+      --emerald: #059669;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", "PingFang TC", sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 960px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .hero {
+      background: linear-gradient(135deg, #1e40af 0%, #4338ca 60%, #6d28d9 100%);
+      color: white;
+      padding: 40px 36px;
+      position: relative;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .hero p {
+      font-size: 14px;
+      color: #e0e7ff;
+      line-height: 1.6;
+      max-width: 640px;
+    }
+    .status-bar {
+      margin-top: 24px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 10px #fbbf24;
+    }
+    .status-dot.online {
+      background: #10b981;
+      box-shadow: 0 0 12px #10b981;
+    }
+    .status-dot.offline {
+      background: #f43f5e;
+      box-shadow: 0 0 12px #f43f5e;
+    }
+    .btn-main {
+      background: #ffffff;
+      color: #1e40af;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+    }
+    .btn-main:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+    .content {
+      padding: 36px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: "";
+      width: 4px;
+      height: 16px;
+      background: #2563eb;
+      border-radius: 2px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .card {
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      background: #ffffff;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card:hover {
+      border-color: #93c5fd;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px -5px rgba(37, 99, 235, 0.1);
+    }
+    .card-sop {
+      font-size: 10px;
+      font-family: monospace;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .sop-04 { background: #eff6ff; color: #1d4ed8; }
+    .sop-03 { background: #ecfdf5; color: #047857; }
+    .sop-06 { background: #f5f3ff; color: #6d28d9; }
+    .sop-org { background: #f8fafc; color: #475569; }
+
+    .card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .card p {
+      font-size: 12px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .card-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #f1f5f9;
+      font-size: 12px;
+      font-weight: 600;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .quick-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 20px;
+      font-size: 12px;
+      color: #475569;
+      line-height: 1.6;
+    }
+    .quick-box strong {
+      color: #0f172a;
+    }
+    .quick-list {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+    .quick-list li {
+      margin-bottom: 4px;
+    }
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Hero Banner -->
+    <div class="hero">
+      <div class="badge">RE-SOP-003 合規標準作業系統</div>
+      <h1>企業教育訓練管理系統</h1>
+      <p>涵蓋訓前線上申請與 Word 自動套印、訓中課堂 QR Code 投影掃碼打卡與講師打分、訓後心得報告自評與兩級主管評核。</p>
+
+      <div class="status-bar">
+        <div class="status-indicator">
+          <div id="statusDot" class="status-dot"></div>
+          <span id="statusText">正在偵測系統服務狀態...</span>
+        </div>
+        <a id="enterBtn" href="http://localhost:3001" target="_blank" class="btn-main">
+          進入系統首頁 &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Content Links -->
+    <div class="content">
+      <div class="section-title">核心業務模組直達入口</div>
+
+      <div class="grid">
+        <!-- 04 -->
+        <a href="http://localhost:3001/applications" target="_blank" class="card">
+          <div>
+            <span class="card-sop sop-04">RE-SOP-003-04</span>
+            <h3>教育訓練申請管理</h3>
+            <p>填寫內訓 / 外訓申請單，送簽即自動產生官方格式 Word 附件供主管線上查閱與簽署。</p>
+          </div>
+          <div class="card-footer">
+            <span>前往申請列表</span>
+            <span>&rarr;</span>
+          </div>
+        </a>
+
+        <!-- 03 -->
+        <a href="http://localhost:3001/attendance" target="_blank" class="card">
+          <div>
+            <span class="card-sop sop-03">RE-SOP-003-03</span>
+            <h3>簽到考核表與現場點名</h3>
+            <p>課堂大螢幕投影專屬 QR Code，同仁手機掃碼即刻打卡；線上即時輸入分數與合格判定。</p>
+          </div>
+          <div class="card-footer">
+            <span>前往考核著名冊</span>
+            <span>&rarr;</span>
+          </div>
+        </a>
+
+        <!-- 06 -->
+        <a href="http://localhost:3001/feedback" target="_blank" class="card">
+          <div>
+            <span class="card-sop sop-06">RE-SOP-003-06</span>
+            <h3>外訓心得報告與行動計畫</h3>
+            <p>結訓自動派發待辦，填寫 5 大維度問卷與落地計畫；支援單位主管與最高主管兩級審查。</p>
+          </div>
+          <div class="card-footer">
+            <span>前往心得報告</span>
+            <span>&rarr;</span>
+          </div>
+        </a>
+
+        <!-- Org -->
+        <a href="http://localhost:3001/organization" target="_blank" class="card">
+          <div>
+            <span class="card-sop sop-org">組織架構與人員層級</span>
+            <h3>人員與審核權限設定</h3>
+            <p>彈性設定同仁部門、工號、角色職級（員工/主管/最高主管/人資）與直屬主管回報鏈。</p>
+          </div>
+          <div class="card-footer">
+            <span>前往架構設定</span>
+            <span>&rarr;</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Quick Launch Instructions -->
+      <div class="section-title">本機啟動與運作指南</div>
+      <div class="quick-box">
+        <strong>💡 日常使用說明：</strong>
+        <ul class="quick-list">
+          <li><strong>快速啟動：</strong>雙擊本目錄中的 <code>啟動教育訓練系統.bat</code>，即可自動喚醒背景服務並開啟瀏覽器。</li>
+          <li><strong>快速停止：</strong>若需釋放連接埠，雙擊本目錄中的 <code>停止教育訓練系統.bat</code> 即可關閉服務。</li>
+          <li><strong>Word 附件下載：</strong>每筆申請單、考核表與心得報告完成填寫後，系統皆已自動產出 Word 檔並可隨時一鍵下載。</li>
+          <li><strong>身分模擬切換：</strong>系統首頁右上角提供一鍵身分切換器，可即時體驗同仁、主管與人資的不同操作權限。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    企業教育訓練管理系統 · 支援 RE-SOP-003 規範作業 · Next.js 現代化輕量單一架構
+  </div>
+
+  <script>
+    // Real-time server connection probe
+    async function checkServer() {
+      const dot = document.getElementById("statusDot");
+      const text = document.getElementById("statusText");
+      const btn = document.getElementById("enterBtn");
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch("http://localhost:3001/api/users", {
+          mode: "cors",
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          dot.className = "status-dot online";
+          text.innerHTML = "系統服務運作中 (連接埠: 3001)";
+          btn.style.opacity = "1";
+          btn.innerHTML = "進入系統首頁 &rarr;";
+        } else {
+          throw new Error("HTTP " + res.status);
+        }
+      } catch (err) {
+        dot.className = "status-dot offline";
+        text.innerHTML = "服務尚未啟動 (請點擊目錄中的『啟動教育訓練系統.bat』)";
+        btn.style.opacity = "0.7";
+        btn.innerHTML = "嘗試開啟 (localhost:3001)";
+      }
+    }
+
+    checkServer();
+    // Re-check every 5 seconds
+    setInterval(checkServer, 5000);
+  </script>
+</body>
+</html>
