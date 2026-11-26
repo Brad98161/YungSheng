@@ -5,10 +5,16 @@ import json
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-TEMPLATES_DIR = BASE_DIR
+TEMPLATES_DIR = os.path.join(BASE_DIR, "SOP官方範本檔")
 
 def get_template_path(filename):
-    return os.path.join(TEMPLATES_DIR, filename)
+    p1 = os.path.join(BASE_DIR, "SOP官方範本檔", filename)
+    if os.path.exists(p1):
+        return p1
+    p2 = os.path.join(BASE_DIR, filename)
+    if os.path.exists(p2):
+        return p2
+    return p1
 
 def set_cell_text(cell, text, bold=False):
     cell.text = str(text) if text is not None else ""
