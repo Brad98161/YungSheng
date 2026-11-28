@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企業教育訓練管理系統 (RE-SOP-003) | 獨立展示版</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .animate-fadeIn { animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+
+  <!-- Top Notification Bar -->
+  <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 text-white text-xs py-2 px-4 flex items-center justify-between shadow-xs">
+    <div class="flex items-center gap-2">
+      <span class="bg-white/20 px-2 py-0.5 rounded font-mono font-bold">RE-SOP-003</span>
+      <span class="font-medium">企業教育訓練管理系統 · 獨立完整展示版 (免伺服器，點擊即可傳送給任何人開啟)</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-white/80 hidden sm:inline">切換檢視身分：</span>
+      <select id="userSelector" onchange="changeUser(this.value)" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-white">
+        <option value="EMP001" class="text-slate-800" selected>張大同 (員工 · 技術工程部)</option>
+        <option value="MGR001" class="text-slate-800">李經理 (單位主管 · 技術部)</option>
+        <option value="DIR001" class="text-slate-800">王總監 (最高主管 · 研發中心)</option>
+        <option value="HR001" class="text-slate-800">陳主任 (人資主管 · 人資部)</option>
+        <option value="ADMIN" class="text-slate-800">系統管理員 (ADMIN)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="flex-1 flex">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-white border-r border-slate-200 w-64 xl:w-72 shrink-0 flex flex-col justify-between transition-all duration-300 select-none">
+      <div>
+        <!-- Brand & Toggle -->
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
+              <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+            </div>
+            <div id="brandText">
+              <div class="text-base font-bold text-slate-900 tracking-tight leading-tight whitespace-nowrap">
+                教育訓練系統
+              </div>
+              <div class="text-[11px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
+                RE-SOP-003 合規系統
+              </div>
+            </div>
+          </div>
+          <button onclick="toggleSidebar()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" title="收合/展開側邊欄">
+            <i data-lucide="panel-left" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="p-3 space-y-1.5">
+          <div id="menuTitle" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-3 mb-2 whitespace-nowrap">
+            功能選單
+          </div>
+
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all bg-blue-50 text-blue-700 font-bold">
+            <div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0 text-blue-600"></i>
+              <span class="nav-text whitespace-nowrap">總覽儀表板</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('applications')" id="nav-applications" class="nav-item w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="file-text" class="w-5 h-5 shrink-0 text-slate-400"></i>
+              <span class="nav-text whitespace-nowrap">教育訓練申請</span>
+            </div>
+            <span id="badge-app" class="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shrink-0">1</span>
+          </button>
+
+          <button onclick="switchTab('attendance')" id="nav-attendance" class="nav-item w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="user-check" class="w-5 h-5 shrink-0 text-slate-400"></i>
+              <span class="nav-text whitespace-nowrap">簽到考核表</span>
+            </div>
+          </button>
+
+          <button onclick="switchTab('feedback')" id="nav-feedback" class="nav-item w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50">
+            <div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="award" class="w-5 h-5 shrink-0 text-slate-400"></i>
+              <span class="nav-text whitespace-nowrap">外訓心得報告</span>
+            </div>
+            <span id="badge-fb" class="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shrink-0">1</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Current User Card -->
+      <div class="p-3 border-t border-slate-100 bg-slate-50/60">
+        <div id="userCard" class="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-2xs space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5 overflow-hidden">
+              <div id="userAvatar" class="w-9 h-9 rounded-full bg-blue-100 text-blue-700 font-bold flex items-center justify-center text-sm shrink-0">
+                張
+              </div>
+              <div class="truncate">
+                <div id="userName" class="text-sm font-bold text-slate-900 truncate">張大同</div>
+                <div id="userDept" class="text-xs text-slate-500 truncate">技術工程部</div>
+              </div>
+            </div>
+            <span id="userRoleBadge" class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded font-medium whitespace-nowrap">員工</span>
+          </div>
+          <div id="userTitle" class="text-xs text-slate-400 truncate">職稱：資深軟體工程師</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 p-6 md:p-8 xl:p-10 min-w-0 overflow-y-auto">
+
+      <!-- ================= 1. TAB: 總覽儀表板 ================= -->
+      <section id="tab-dashboard" class="tab-content space-y-8 animate-fadeIn">
+        <!-- Greeting Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+          <div>
+            <h1 class="text-2xl xl:text-3xl font-extrabold text-slate-900 tracking-tight">
+              您好，<span id="dashGreetingName">張大同</span>
+            </h1>
+            <p class="text-sm xl:text-base text-slate-500 mt-1">
+              <span id="dashGreetingRole">技術工程部 · 資深軟體工程師</span> · 歡迎使用 RE-SOP-003 合規教育訓練管理系統
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="switchTab('new-application')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm shadow-sm transition-all hover:shadow flex items-center gap-2 whitespace-nowrap">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              填寫教育訓練申請表
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">申請單總量</div>
+            <div class="text-3xl font-extrabold text-slate-900 mt-2">2 <span class="text-base font-normal text-slate-400">件</span></div>
+            <div class="text-xs text-slate-500 mt-2 flex items-center gap-1.5 whitespace-nowrap">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              已核准成案 1 件
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">開課與考核班級</div>
+            <div class="text-3xl font-extrabold text-slate-900 mt-2">1 <span class="text-base font-normal text-slate-400">班</span></div>
+            <div class="text-xs text-emerald-600 font-semibold mt-2 flex items-center gap-1.5 whitespace-nowrap">
+              <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+              支援課堂投影 QR Code 掃碼
+            </div>
+          </div>
+
+          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">年度累計培訓總時數</div>
+            <div class="text-3xl font-extrabold text-slate-900 mt-2">14 <span class="text-base font-normal text-slate-400">小時</span></div>
+            <div class="text-xs text-slate-500 mt-2 whitespace-nowrap">已繳交外訓心得 1 份</div>
+          </div>
+
+          <div class="bg-amber-50/70 border border-amber-200 p-5 rounded-2xl shadow-2xs">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+              <span>待我處理事項</span>
+              <span class="bg-amber-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full">2 件</span>
+            </div>
+            <div class="text-2xl font-extrabold text-amber-700 mt-2">
+              2 <span class="text-base font-normal text-amber-600">件待辦</span>
+            </div>
+            <div class="text-xs text-slate-500 mt-2 whitespace-nowrap">請及時進行線上簽核或填寫</div>
+          </div>
+        </div>
+
+        <!-- Recent Applications Table (100% Full Width & No Wrapping) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden w-full">
+          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h2 class="font-bold text-slate-900 text-base">近期教育訓練申請</h2>
+              <p class="text-xs text-slate-400 mt-0.5">送簽即時自動套印 Word 附件，支援線上簽審</p>
+            </div>
+            <button onclick="switchTab('applications')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 whitespace-nowrap">
+              檢視全部申請 &rarr;
+            </button>
+          </div>
+
+          <div class="overflow-x-auto w-full">
+            <table class="w-full text-left text-sm table-auto">
+              <thead class="bg-slate-50/80 text-slate-500 font-semibold border-b border-slate-100 text-xs">
+                <tr>
+                  <th class="px-5 py-3.5 whitespace-nowrap min-w-[140px]">單號 / 申請日</th>
+                  <th class="px-4 py-3.5 whitespace-nowrap min-w-[80px] text-center">類別</th>
+                  <th class="px-5 py-3.5 min-w-[280px]">課程名稱與目標</th>
+                  <th class="px-5 py-3.5 whitespace-nowrap min-w-[140px]">申請人 / 部門</th>
+                  <th class="px-5 py-3.5 whitespace-nowrap min-w-[180px]">受訓期間 (時數)</th>
+                  <th class="px-5 py-3.5 whitespace-nowrap min-w-[140px] text-center">審核狀態</th>
+                  <th class="px-5 py-3.5 whitespace-nowrap min-w-[150px] text-right">操作</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-4 font-mono text-xs text-slate-600 font-medium whitespace-nowrap min-w-[140px]">
+                    <div class="font-bold text-slate-800 whitespace-nowrap">TR-202611-001</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">2026 / 11 / 20</div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap text-center min-w-[80px]">
+                    <span class="inline-block px-3 py-1 rounded-md text-xs font-bold whitespace-nowrap tracking-wider leading-normal bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      外訓
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 min-w-[280px]">
+                    <div class="font-bold text-slate-900 text-sm">AI 智慧製造實戰工作坊與邊緣運算應用</div>
+                    <div class="text-xs text-slate-400 mt-0.5 line-clamp-1">提升跨部門流程自動化效率與數據決策能力</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap min-w-[140px]">
+                    <div class="font-semibold text-slate-800 whitespace-nowrap">張大同</div>
+                    <div class="text-xs text-slate-400 whitespace-nowrap">技術工程部</div>
+                  </td>
+                  <td class="px-5 py-4 text-xs whitespace-nowrap min-w-[180px]">
+                    <div class="font-medium text-slate-800 whitespace-nowrap">2026/12/01 ~ 2026/12/02</div>
+                    <div class="text-slate-400 mt-0.5 whitespace-nowrap">共 14 小時</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap text-center min-w-[140px]">
+                    <span class="inline-flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full font-bold whitespace-nowrap">
+                      <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i>
+                      已核准成案
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-right space-x-2 whitespace-nowrap min-w-[150px]">
+                    <button onclick="downloadDemoWord('RE-SOP-003-04教育訓練申請表07.docx')" class="inline-flex items-center gap-1 text-xs text-slate-700 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-2.5 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap" title="下載依 RE-SOP-003-04 標準自動填妥之 Word 檔">
+                      <i data-lucide="download" class="w-3.5 h-3.5 text-blue-600"></i>
+                      Word
+                    </button>
+                    <button onclick="switchTab('app-detail-1')" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                      詳情 &rarr;
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="px-5 py-4 font-mono text-xs text-slate-600 font-medium whitespace-nowrap min-w-[140px]">
+                    <div class="font-bold text-slate-800 whitespace-nowrap">TR-202611-002</div>
+                    <div class="text-[11px] text-slate-400 mt-0.5 whitespace-nowrap">2026 / 11 / 23</div>
+                  </td>
+                  <td class="px-4 py-4 whitespace-nowrap text-center min-w-[80px]">
+                    <span class="inline-block px-3 py-1 rounded-md text-xs font-bold whitespace-nowrap tracking-wider leading-normal bg-cyan-50 text-cyan-700 border border-cyan-200">
+                      內訓
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 min-w-[280px]">
+                    <div class="font-bold text-slate-900 text-sm">新版 Design System 與無障礙設計規範 (WCAG 2.2)</div>
+                    <div class="text-xs text-slate-400 mt-0.5 line-clamp-1">建立全公司一致之數位介面體驗，並降低前端工程師溝通成本</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap min-w-[140px]">
+                    <div class="font-semibold text-slate-800 whitespace-nowrap">王小美</div>
+                    <div class="text-xs text-slate-400 whitespace-nowrap">產品研發部</div>
+                  </td>
+                  <td class="px-5 py-4 text-xs whitespace-nowrap min-w-[180px]">
+                    <div class="font-medium text-slate-800 whitespace-nowrap">2026/12/10 ~ 2026/12/10</div>
+                    <div class="text-slate-400 mt-0.5 whitespace-nowrap">共 6 小時</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap text-center min-w-[140px]">
+                    <span class="inline-flex items-center gap-1.5 text-xs text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full font-bold whitespace-nowrap">
+                      <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                      待單位主管審核
+                    </span>
+                  </td>
+                  <td class="px-5 py-4 text-right space-x-2 whitespace-nowrap min-w-[150px]">
+                    <button onclick="switchTab('applications')" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+                      詳情 &rarr;
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 3 Quick Shortcuts -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+          <h3 class="font-bold text-slate-900 text-sm pb-2 border-b border-slate-100">快速功能捷徑</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <button onclick="switchTab('new-application')" class="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 font-semibold transition-colors border border-slate-100 text-left">
+              <div class="flex items-center gap-3">
+                <i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i>
+                <div>
+                  <div class="text-slate-900 font-bold">提出訓練申請</div>
+                  <div class="text-xs text-slate-400 font-normal mt-0.5">線上申請並自動生成 Word 附件</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400"></i>
+            </button>
+
+            <button onclick="switchTab('attendance')" class="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 font-semibold transition-colors border border-slate-100 text-left">
+              <div class="flex items-center gap-3">
+                <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
+                <div>
+                  <div class="text-slate-900 font-bold">課堂簽到與成績考核</div>
+                  <div class="text-xs text-slate-400 font-normal mt-0.5">點名、QR Code 掃碼、成績評核</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400"></i>
+            </button>
+
+            <button onclick="switchTab('feedback')" class="flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-purple-50 text-slate-700 hover:text-purple-700 font-semibold transition-colors border border-slate-100 text-left">
+              <div class="flex items-center gap-3">
+                <i data-lucide="award" class="w-5 h-5 text-purple-600"></i>
+                <div>
+                  <div class="text-slate-900 font-bold">外訓心得與評核報告</div>
+                  <div class="text-xs text-slate-400 font-normal mt-0.5">訓後心得填報、行動計畫、兩級主管評核</div>
+                </div>
+              </div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. TAB: 教育訓練申請清單 ================= -->
+      <section id="tab-applications" class="tab-content space-y-6 hidden animate-fadeIn">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">教育訓練申請管理</h1>
+            <p class="text-xs text-slate-500 mt-1">RE-SOP-003-04 標準作業流程：訓前申請、線上送審與自動套印</p>
+          </div>
+          <button onclick="switchTab('new-application')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            新增申請單
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+          <p class="text-sm text-slate-600">
+            本系統依據 RE-SOP-003-04 規範，提供內訓與外訓線上填報、多人合填受訓名單、人資詢議價與多層級線上簽審：
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50/40">
+              <span class="text-xs font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded">外訓案例</span>
+              <h4 class="font-bold text-slate-900 text-sm mt-2">AI 智慧製造實戰工作坊與邊緣運算應用</h4>
+              <p class="text-xs text-slate-500 mt-1">單號：TR-202611-001 · 申請人：張大同 (技術工程部)</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-xs font-bold text-emerald-700">狀態：已核准成案</span>
+                <button onclick="switchTab('app-detail-1')" class="text-xs font-bold text-blue-600 hover:underline">檢視詳細審核內容 &rarr;</button>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-xl border border-cyan-200 bg-cyan-50/40">
+              <span class="text-xs font-bold text-cyan-700 bg-cyan-100 px-2 py-0.5 rounded">內訓案例</span>
+              <h4 class="font-bold text-slate-900 text-sm mt-2">新版 Design System 與無障礙設計規範 (WCAG 2.2)</h4>
+              <p class="text-xs text-slate-500 mt-1">單號：TR-202611-002 · 申請人：王小美 (產品研發部)</p>
+              <div class="mt-3 flex items-center justify-between">
+                <span class="text-xs font-bold text-blue-700">狀態：待主管審核</span>
+                <button onclick="switchTab('new-application')" class="text-xs font-bold text-blue-600 hover:underline">體驗填寫新申請表 &rarr;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 3. TAB: 線上填寫申請表 (含其他動態輸入) ================= -->
+      <section id="tab-new-application" class="tab-content space-y-6 hidden animate-fadeIn max-w-4xl mx-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-900">填寫教育訓練申請表</h1>
+            <p class="text-xs text-slate-400 mt-0.5">RE-SOP-003-04 標準表單 · 支援自訂其他選項與 Word 即時套印</p>
+          </div>
+          <button onclick="switchTab('dashboard')" class="text-xs text-slate-500 hover:text-slate-800">
+            &larr; 返回儀表板
+          </button>
+        </div>
+
+        <form id="appForm" onsubmit="handleFormSubmit(event)" class="bg-white p-6 md:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6">
+          <!-- Section 1 -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-3">1. 申請人與訓練性質</h3>
+            <div class="grid grid-cols-2 gap-4">
+              <button type="button" onclick="setFormType('外訓')" id="btn-type-external" class="p-3 rounded-xl border text-center text-sm font-bold transition-all bg-indigo-50 border-indigo-500 text-indigo-700">
+                外訓（派員至外部受訓）
+              </button>
+              <button type="button" onclick="setFormType('內訓')" id="btn-type-internal" class="p-3 rounded-xl border text-center text-sm font-bold transition-all bg-white border-slate-200 text-slate-600 hover:bg-slate-50">
+                內訓（公司內部開班）
+              </button>
+            </div>
+          </div>
+
+          <!-- Section 2 -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-blue-600 pl-3">2. 課程資訊與目標</h3>
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">課程名稱 *</label>
+              <input type="text" id="inputCourseName" required value="企業級生成式 AI 應用工作坊" class="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">受訓內容綱要 *</label>
+              <textarea rows="2" required class="w-full px-3.5 py-2 rounded-lg border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">探討 LLM 大語言模型微調、Prompt 提示工程實務與內部系統資安落地規範。</textarea>
+            </div>
+          </div>
+
+          <!-- Section 3: 外訓專屬受訓人員與動態「其他」輸入 -->
+          <div class="space-y-4 bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+            <h3 class="text-sm font-bold text-indigo-900 border-l-4 border-indigo-600 pl-3">3. 外訓專屬受訓人員與訓後要求</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- 訓後繳交資料 -->
+              <div class="bg-white p-3.5 rounded-xl border border-indigo-100 shadow-2xs">
+                <label class="text-xs font-semibold text-slate-700 block mb-2">訓後應繳交資料 (勾選)</label>
+                <div class="flex flex-wrap gap-2 text-xs">
+                  <button type="button" onclick="toggleBtn(this)" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600">■ 外訓心得報告</button>
+                  <button type="button" onclick="toggleBtn(this)" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600">■ 課程教材</button>
+                  <button type="button" onclick="toggleBtn(this)" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-slate-50 text-slate-600 border-slate-200">□ 證書或證照</button>
+                  <button type="button" onclick="toggleOtherDoc(this)" id="btnOtherDoc" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600">■ 其他</button>
+                </div>
+                <div id="otherDocInputWrapper" class="mt-3 pt-2.5 border-t border-slate-100 animate-fadeIn">
+                  <span class="text-xs text-indigo-700 font-semibold block mb-1">請說明其他應繳交資料：</span>
+                  <input type="text" id="otherDocInput" value="大會投影片與專案實作程式碼" class="w-full px-3 py-1.5 rounded-lg border border-indigo-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+              </div>
+
+              <!-- 檢附附件 -->
+              <div class="bg-white p-3.5 rounded-xl border border-indigo-100 shadow-2xs">
+                <label class="text-xs font-semibold text-slate-700 block mb-2">檢附附件 (勾選)</label>
+                <div class="flex flex-wrap gap-2 text-xs">
+                  <button type="button" onclick="toggleBtn(this)" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600">■ 課程簡章</button>
+                  <button type="button" onclick="toggleBtn(this)" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600">■ 報名表</button>
+                  <button type="button" onclick="toggleOtherAtt(this)" id="btnOtherAtt" class="px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600">■ 其他</button>
+                </div>
+                <div id="otherAttInputWrapper" class="mt-3 pt-2.5 border-t border-slate-100 animate-fadeIn">
+                  <span class="text-xs text-indigo-700 font-semibold block mb-1">請說明其他檢附附件：</span>
+                  <input type="text" id="otherAttInput" value="原廠贊助早鳥公文函" class="w-full px-3 py-1.5 rounded-lg border border-indigo-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- 主管要求重點 -->
+            <div class="pt-3 border-t border-indigo-100 text-xs space-y-2">
+              <div class="flex items-center gap-4">
+                <span class="font-semibold text-slate-700">主管要求學習重點：</span>
+                <label class="inline-flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="transferOpt" value="transfer" checked onchange="toggleTransfer(this.value)"> 轉訓
+                </label>
+                <label class="inline-flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="transferOpt" value="none" onchange="toggleTransfer(this.value)"> 不轉訓
+                </label>
+                <label class="inline-flex items-center gap-1 cursor-pointer">
+                  <input type="radio" name="transferOpt" value="other" onchange="toggleTransfer(this.value)"> 其他
+                </label>
+              </div>
+
+              <div id="transferPanel" class="p-2.5 bg-white rounded-lg border border-indigo-100 flex items-center gap-2">
+                <span class="text-slate-600">建議轉內訓時限：</span>
+                <input type="text" value="3" class="w-12 px-2 py-1 border border-slate-300 rounded text-center text-xs">
+                <span class="text-slate-600">週內，指定講師：</span>
+                <input type="text" value="張大同" class="w-28 px-2 py-1 border border-slate-300 rounded text-center text-xs">
+              </div>
+
+              <div id="transferOtherPanel" class="p-2.5 bg-white rounded-lg border border-indigo-100 hidden">
+                <input type="text" placeholder="請填寫其他要求說明..." class="w-full px-2 py-1 border border-indigo-300 rounded text-xs">
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Bar -->
+          <div class="pt-4 border-t border-slate-200 flex items-center justify-between">
+            <div class="text-xs text-slate-400">
+              送簽後自動在背景產生對應之 Word 附件檔案
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm shadow-md transition-all">
+              確認送審申請單 &rarr;
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ================= 4. TAB: 簽到考核表與 QR Code ================= -->
+      <section id="tab-attendance" class="tab-content space-y-6 hidden animate-fadeIn">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">課堂現場簽到與考核評分</h1>
+            <p class="text-xs text-slate-500 mt-1">RE-SOP-003-03 標準作業表單 · 支援大螢幕投影 QR Code 掃碼打卡</p>
+          </div>
+          <button onclick="openQrModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-sm">
+            <i data-lucide="qr-code" class="w-4 h-4"></i>
+            投影課堂簽到 QR Code
+          </button>
+        </div>
+
+        <!-- Attendance Table -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div>
+              <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                點名進行中
+              </span>
+              <h2 class="text-base font-bold text-slate-900 mt-1.5">AI 智慧製造實戰工作坊 (班級編號：ATT-2026-001)</h2>
+              <p class="text-xs text-slate-400">講師：李技術長 · 地點：第一會議室 · 總時數：14 小時</p>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-slate-400">實到人數 / 應到人數</div>
+              <div class="text-2xl font-black text-emerald-600"><span id="signedCount">3</span> / 4 人</div>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 font-bold text-slate-600 border-b border-slate-200">
+                <tr>
+                  <th class="p-3">學員姓名</th>
+                  <th class="p-3">工號 / 部門</th>
+                  <th class="p-3 text-center">現場簽到狀態</th>
+                  <th class="p-3 text-center">考核分數 (0-100)</th>
+                  <th class="p-3 text-center">合格判定</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">張大同</td>
+                  <td class="p-3 text-slate-500">EMP001 · 技術工程部</td>
+                  <td class="p-3 text-center">
+                    <button onclick="toggleStudentSign(this)" class="px-3 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">✓ 已簽到 (09:02)</button>
+                  </td>
+                  <td class="p-3 text-center">
+                    <input type="number" value="92" class="w-16 px-2 py-1 border border-slate-300 rounded text-center font-bold">
+                  </td>
+                  <td class="p-3 text-center">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">合格</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">王小美</td>
+                  <td class="p-3 text-slate-500">EMP002 · 產品研發部</td>
+                  <td class="p-3 text-center">
+                    <button onclick="toggleStudentSign(this)" class="px-3 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">✓ 已簽到 (09:05)</button>
+                  </td>
+                  <td class="p-3 text-center">
+                    <input type="number" value="88" class="w-16 px-2 py-1 border border-slate-300 rounded text-center font-bold">
+                  </td>
+                  <td class="p-3 text-center">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">合格</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">林志明</td>
+                  <td class="p-3 text-slate-500">EMP003 · 技術工程部</td>
+                  <td class="p-3 text-center">
+                    <button onclick="toggleStudentSign(this)" class="px-3 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800">✓ 已簽到 (09:10)</button>
+                  </td>
+                  <td class="p-3 text-center">
+                    <input type="number" value="85" class="w-16 px-2 py-1 border border-slate-300 rounded text-center font-bold">
+                  </td>
+                  <td class="p-3 text-center">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-600 text-white">合格</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-3 font-bold text-slate-900">陳淑芬</td>
+                  <td class="p-3 text-slate-500">EMP004 · 人力資源部</td>
+                  <td class="p-3 text-center">
+                    <button onclick="toggleStudentSign(this)" class="px-3 py-1 rounded-full font-bold bg-slate-200 text-slate-600">未簽到 (點擊簽到)</button>
+                  </td>
+                  <td class="p-3 text-center">
+                    <input type="number" placeholder="未評" class="w-16 px-2 py-1 border border-slate-300 rounded text-center font-bold">
+                  </td>
+                  <td class="p-3 text-center">
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-400">待評</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+            <button onclick="downloadDemoWord('RE-SOP-003-03教育訓練簽到考核表04.docx')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5">
+              <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+              下載 RE-SOP-003-03 簽到考核 Word
+            </button>
+            <button onclick="alert('已成功保存考核成績！')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-xl text-xs">
+              儲存成績並封存
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. TAB: 外訓心得報告 ================= -->
+      <section id="tab-feedback" class="tab-content space-y-6 hidden animate-fadeIn max-w-4xl mx-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-900">外訓心得報告填報與兩級主管評核</h1>
+            <p class="text-xs text-slate-500 mt-1">RE-SOP-003-06 表單 · 涵蓋滿意度五維度、核心學習心得、行動方針與兩級主管評語</p>
+          </div>
+          <button onclick="downloadDemoWord('RE-SOP-003-06外訓心得報告04.docx')" class="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            下載 SOP 報告 Word
+          </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-6 text-xs">
+          <!-- Basic Info -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <div><span class="text-slate-400 block">學員姓名：</span><span class="font-bold text-slate-800">張大同 (EMP001)</span></div>
+            <div><span class="text-slate-400 block">服務部門：</span><span class="font-bold text-slate-800">技術工程部</span></div>
+            <div><span class="text-slate-400 block">課程名稱：</span><span class="font-bold text-slate-800">生成式 AI 企業架構</span></div>
+            <div><span class="text-slate-400 block">訓練機構：</span><span class="font-bold text-slate-800">資策會數位教育研究所</span></div>
+          </div>
+
+          <!-- Section 1: 滿意度自評 -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-purple-600 pl-3">1. 課程成效自評（五大維度）</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div class="p-3 bg-slate-50 rounded-lg flex items-center justify-between">
+                <span>課程內容實用性</span>
+                <span class="text-amber-500 font-bold">★★★★★ (非常滿意)</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-lg flex items-center justify-between">
+                <span>教材與講義品質</span>
+                <span class="text-amber-500 font-bold">★★★★☆ (滿意)</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-lg flex items-center justify-between">
+                <span>講師表達與引導</span>
+                <span class="text-amber-500 font-bold">★★★★★ (非常滿意)</span>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-lg flex items-center justify-between">
+                <span>工作實務應用價值</span>
+                <span class="text-amber-500 font-bold">★★★★★ (非常滿意)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: 心得與行動計畫 -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-purple-600 pl-3">2. 學習重點與行動計畫</h3>
+            <div class="p-3 bg-purple-50/50 rounded-xl border border-purple-100 space-y-2">
+              <div class="font-bold text-purple-900">【主要學習心得與觀念啟發】</div>
+              <p class="text-slate-700 leading-relaxed">
+                深入理解企業如何建置私有化 RAG 檢索增強系統，並透過向量資料庫保護內部核心資料不外洩，架構十分契合本部門目前推動之知識管理轉型專案。
+              </p>
+              <div class="font-bold text-purple-900 pt-2">【受訓後具體行動方針與落地計畫】</div>
+              <p class="text-slate-700 leading-relaxed">
+                預計於 3 週內完成內部架構 PoC 原型，並於部門技術週會進行 30 分鐘分享，將外訓所學擴散至全體研發同仁。
+              </p>
+            </div>
+          </div>
+
+          <!-- Section 3: 主管評核 -->
+          <div class="space-y-3">
+            <h3 class="text-sm font-bold text-slate-900 border-l-4 border-purple-600 pl-3">3. 兩級主管綜合評核與意見</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-3.5 rounded-xl border border-blue-200 bg-blue-50/40">
+                <div class="font-bold text-blue-900 mb-1">直屬主管評核（李經理）</div>
+                <div class="text-slate-700 mb-2">同意同仁提出之行動方針，建議搭配本季 OKR 專案排程加速推進。</div>
+                <span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[11px] font-bold">✓ 主管已核准</span>
+              </div>
+              <div class="p-3.5 rounded-xl border border-indigo-200 bg-indigo-50/40">
+                <div class="font-bold text-indigo-900 mb-1">部門最高主管覆核（王總監）</div>
+                <div class="text-slate-700 mb-2">准予結案，並請人資部將技術成果記錄於同仁年度人才培育檔案。</div>
+                <span class="bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded text-[11px] font-bold">✓ 總監已覆核</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. TAB: 申請單詳情示範 ================= -->
+      <section id="tab-app-detail-1" class="tab-content space-y-6 hidden animate-fadeIn max-w-4xl mx-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-200">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-900">申請單詳情 (TR-202611-001)</h1>
+            <p class="text-xs text-slate-400 mt-0.5">RE-SOP-003-04 完整線上核准單據示範</p>
+          </div>
+          <button onclick="switchTab('dashboard')" class="text-xs text-slate-500 hover:text-slate-800">&larr; 返回儀表板</button>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs space-y-4 text-xs">
+          <div class="flex items-center justify-between bg-emerald-50 text-emerald-800 p-3 rounded-xl border border-emerald-200">
+            <span class="font-bold flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4"></i> 本單據已通過兩級審查核准成案！</span>
+            <button onclick="downloadDemoWord('RE-SOP-003-04教育訓練申請表07.docx')" class="bg-emerald-600 text-white font-bold px-3 py-1 rounded-lg">下載 Word 附件</button>
+          </div>
+          <div class="grid grid-cols-2 gap-4 border p-4 rounded-xl">
+            <div><strong>課程名稱：</strong>AI 智慧製造實戰工作坊與邊緣運算應用</div>
+            <div><strong>訓練性質：</strong>外訓 (派員至外部受訓)</div>
+            <div><strong>申請人：</strong>張大同 (技術工程部)</div>
+            <div><strong>受訓時程：</strong>2026/12/01 ~ 2026/12/02 (共 14 小時)</div>
+            <div><strong>應繳資料：</strong>■ 外訓心得報告  ■ 課程教材  ■ 其他（大會錄音及完整簡報）</div>
+            <div><strong>檢附附件：</strong>■ 課程簡章  ■ 報名表  ■ 其他（主辦單位邀請函公文）</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- QR Code Modal Dialog -->
+  <div id="qrModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full p-8 text-center space-y-5 shadow-2xl relative animate-fadeIn">
+      <button onclick="closeQrModal()" class="absolute right-5 top-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-sm font-bold">
+        ✕
+      </button>
+      <div>
+        <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold mb-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          課堂現場即時簽到 QR Code
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">AI 智慧製造實戰工作坊</h3>
+        <p class="text-xs text-slate-500 mt-1">請受訓同仁打開手機相機掃描下方條碼，即可線上完成打卡</p>
+      </div>
+
+      <!-- Simulated QR Code SVG Graphic -->
+      <div class="flex justify-center py-2">
+        <div class="p-4 bg-white rounded-2xl border-2 border-emerald-500 shadow-xl inline-block">
+          <svg class="w-48 h-48 mx-auto text-slate-900" viewBox="0 0 100 100" fill="currentColor">
+            <!-- QR Corner 1 -->
+            <rect x="5" y="5" width="25" height="25" rx="3" fill="#0f172a"/>
+            <rect x="9" y="9" width="17" height="17" rx="2" fill="#ffffff"/>
+            <rect x="13" y="13" width="9" height="9" fill="#059669"/>
+            <!-- QR Corner 2 -->
+            <rect x="70" y="5" width="25" height="25" rx="3" fill="#0f172a"/>
+            <rect x="74" y="9" width="17" height="17" rx="2" fill="#ffffff"/>
+            <rect x="78" y="13" width="9" height="9" fill="#059669"/>
+            <!-- QR Corner 3 -->
+            <rect x="5" y="70" width="25" height="25" rx="3" fill="#0f172a"/>
+            <rect x="9" y="74" width="17" height="17" rx="2" fill="#ffffff"/>
+            <rect x="13" y="78" width="9" height="9" fill="#059669"/>
+            <!-- Central Patterns -->
+            <rect x="36" y="8" width="8" height="8" fill="#0f172a"/>
+            <rect x="48" y="8" width="8" height="8" fill="#059669"/>
+            <rect x="36" y="24" width="16" height="8" fill="#0f172a"/>
+            <rect x="8" y="38" width="16" height="8" fill="#0f172a"/>
+            <rect x="28" y="38" width="8" height="16" fill="#059669"/>
+            <rect x="40" y="38" width="20" height="20" rx="3" fill="#0f172a"/>
+            <rect x="66" y="38" width="8" height="8" fill="#059669"/>
+            <rect x="78" y="38" width="14" height="8" fill="#0f172a"/>
+            <rect x="66" y="52" width="26" height="8" fill="#0f172a"/>
+            <rect x="8" y="54" width="8" height="8" fill="#059669"/>
+            <rect x="20" y="54" width="14" height="8" fill="#0f172a"/>
+            <rect x="38" y="66" width="16" height="10" fill="#059669"/>
+            <rect x="60" y="66" width="10" height="16" fill="#0f172a"/>
+            <rect x="76" y="66" width="16" height="8" fill="#059669"/>
+            <rect x="38" y="82" width="26" height="10" fill="#0f172a"/>
+            <rect x="72" y="80" width="8" height="12" fill="#059669"/>
+            <rect x="86" y="80" width="6" height="12" fill="#0f172a"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+        簽到網址：<span class="font-mono text-emerald-700 font-bold">http://192.168.0.166:3001/attendance/scan</span>
+      </div>
+
+      <button onclick="closeQrModal()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl text-xs">
+        關閉投影視窗
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Tab Switching
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-item').forEach(el => {
+        el.classList.remove('bg-blue-50', 'text-blue-700', 'font-bold');
+        el.classList.add('text-slate-600');
+        const icon = el.querySelector('i');
+        if (icon) icon.classList.remove('text-blue-600');
+      });
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) {
+        target.classList.remove('hidden');
+      }
+
+      const activeNav = document.getElementById('nav-' + tabId);
+      if (activeNav) {
+        activeNav.classList.add('bg-blue-50', 'text-blue-700', 'font-bold');
+        activeNav.classList.remove('text-slate-600');
+        const icon = activeNav.querySelector('i');
+        if (icon) icon.classList.add('text-blue-600');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Toggle Sidebar
+    let sidebarCollapsed = false;
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const brandText = document.getElementById('brandText');
+      const menuTitle = document.getElementById('menuTitle');
+      const navTexts = document.querySelectorAll('.nav-text');
+      const userCard = document.getElementById('userCard');
+      
+      sidebarCollapsed = !sidebarCollapsed;
+      if (sidebarCollapsed) {
+        sidebar.classList.remove('w-64', 'xl:w-72');
+        sidebar.classList.add('w-20');
+        brandText.classList.add('hidden');
+        menuTitle.classList.add('hidden');
+        navTexts.forEach(el => el.classList.add('hidden'));
+        userCard.classList.add('hidden');
+      } else {
+        sidebar.classList.remove('w-20');
+        sidebar.classList.add('w-64', 'xl:w-72');
+        brandText.classList.remove('hidden');
+        menuTitle.classList.remove('hidden');
+        navTexts.forEach(el => el.classList.remove('hidden'));
+        userCard.classList.remove('hidden');
+      }
+    }
+
+    // Role Changing Simulator
+    const users = {
+      EMP001: { name: '張大同', dept: '技術工程部', title: '資深軟體工程師', role: '員工', badgeBg: 'bg-slate-100 text-slate-700' },
+      MGR001: { name: '李經理', dept: '技術工程部', title: '工程部主管', role: '單位主管', badgeBg: 'bg-blue-100 text-blue-700' },
+      DIR001: { name: '王總監', dept: '研發中心', title: '部門最高主管', role: '最高主管', badgeBg: 'bg-indigo-100 text-indigo-700' },
+      HR001:  { name: '陳主任', dept: '人力資源部', title: '人資部主管', role: '人資主管', badgeBg: 'bg-purple-100 text-purple-700' },
+      ADMIN:  { name: '系統管理員', dept: '資訊技術處', title: '系統主管', role: '管理員', badgeBg: 'bg-amber-100 text-amber-700' }
+    };
+
+    function changeUser(id) {
+      const u = users[id];
+      if (!u) return;
+      document.getElementById('userName').textContent = u.name;
+      document.getElementById('userAvatar').textContent = u.name.slice(0, 1);
+      document.getElementById('userDept').textContent = u.dept;
+      document.getElementById('userTitle').textContent = '職稱：' + u.title;
+      
+      const badge = document.getElementById('userRoleBadge');
+      badge.textContent = u.role;
+      badge.className = u.badgeBg + ' text-xs px-2 py-0.5 rounded font-medium whitespace-nowrap';
+
+      document.getElementById('dashGreetingName').textContent = u.name;
+      document.getElementById('dashGreetingRole').textContent = u.dept + ' · ' + u.title;
+    }
+
+    // Form Interactions
+    function setFormType(type) {
+      const btnExt = document.getElementById('btn-type-external');
+      const btnInt = document.getElementById('btn-type-internal');
+      if (type === '外訓') {
+        btnExt.className = 'p-3 rounded-xl border text-center text-sm font-bold bg-indigo-50 border-indigo-500 text-indigo-700';
+        btnInt.className = 'p-3 rounded-xl border text-center text-sm font-bold bg-white border-slate-200 text-slate-600 hover:bg-slate-50';
+      } else {
+        btnInt.className = 'p-3 rounded-xl border text-center text-sm font-bold bg-cyan-50 border-cyan-500 text-cyan-700';
+        btnExt.className = 'p-3 rounded-xl border text-center text-sm font-bold bg-white border-slate-200 text-slate-600 hover:bg-slate-50';
+      }
+    }
+
+    function toggleBtn(btn) {
+      if (btn.textContent.startsWith('■')) {
+        btn.textContent = '□ ' + btn.textContent.slice(2);
+        btn.className = 'px-2.5 py-1 rounded-md border text-xs font-medium bg-slate-50 text-slate-600 border-slate-200';
+      } else {
+        btn.textContent = '■ ' + btn.textContent.slice(2);
+        btn.className = 'px-2.5 py-1 rounded-md border text-xs font-medium bg-indigo-600 text-white border-indigo-600';
+      }
+    }
+
+    function toggleOtherDoc(btn) {
+      toggleBtn(btn);
+      const isChecked = btn.textContent.startsWith('■');
+      const wrapper = document.getElementById('otherDocInputWrapper');
+      if (isChecked) {
+        wrapper.classList.remove('hidden');
+        document.getElementById('otherDocInput').focus();
+      } else {
+        wrapper.classList.add('hidden');
+      }
+    }
+
+    function toggleOtherAtt(btn) {
+      toggleBtn(btn);
+      const isChecked = btn.textContent.startsWith('■');
+      const wrapper = document.getElementById('otherAttInputWrapper');
+      if (isChecked) {
+        wrapper.classList.remove('hidden');
+        document.getElementById('otherAttInput').focus();
+      } else {
+        wrapper.classList.add('hidden');
+      }
+    }
+
+    function toggleTransfer(val) {
+      const tPanel = document.getElementById('transferPanel');
+      const oPanel = document.getElementById('transferOtherPanel');
+      if (val === 'transfer') {
+        tPanel.classList.remove('hidden');
+        oPanel.classList.add('hidden');
+      } else if (val === 'other') {
+        tPanel.classList.add('hidden');
+        oPanel.classList.remove('hidden');
+      } else {
+        tPanel.classList.add('hidden');
+        oPanel.classList.add('hidden');
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      const course = document.getElementById('inputCourseName').value;
+      const otherDoc = document.getElementById('otherDocInput').value;
+      alert('🎉 申請單送出成功！\n\n單號：TR-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-003\n課程名稱：' + course + '\n其他繳交資料：' + otherDoc + '\n\n系統已自動模擬填入 RE-SOP-003-04 Word 附件並送出主管審核！');
+      switchTab('dashboard');
+    }
+
+    // Attendance Interactions
+    function toggleStudentSign(btn) {
+      if (btn.textContent.includes('已簽到')) {
+        btn.textContent = '未簽到 (點擊簽到)';
+        btn.className = 'px-3 py-1 rounded-full font-bold bg-slate-200 text-slate-600';
+      } else {
+        const now = new Date();
+        const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+        btn.textContent = '✓ 已簽到 (' + time + ')';
+        btn.className = 'px-3 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800';
+      }
+      // recalculate count
+      const count = document.querySelectorAll('button:contains("✓ 已簽到")');
+    }
+
+    function openQrModal() {
+      document.getElementById('qrModal').classList.remove('hidden');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qrModal').classList.add('hidden');
+    }
+
+    function downloadDemoWord(filename) {
+      alert('📄 模擬下載 Word 檔案：' + filename + '\n\n真實環境下系統會透過 Python (python-docx) 自動將線上表單資料套印至此 Word 檔並輸出。');
+    }
+  </script>
+</body>
+</html>
